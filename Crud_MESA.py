@@ -1,37 +1,13 @@
 
-# ============================================================
-# SISTEMA CRUD DE MESAS
-# Proyecto en Python
-# ============================================================
-#
-# Funciones principales:
-# - Crear mesas
-# - Listar mesas
-# - Buscar mesa por ID
-# - Buscar mesa por número
-# - Actualizar mesas
-# - Eliminar mesas
-# - Cambiar estado de una mesa
-# - Filtrar mesas por estado
-# - Mostrar estadísticas
-#
-# No utiliza MySQL.
-# La información se almacena temporalmente en memoria.
-# ============================================================
 
-
-# ============================================================
-# VARIABLES GLOBALES
-# ============================================================
 
 mesas = []
 
 siguiente_id = 1
 
 
-# ============================================================
 # DATOS DE PRUEBA
-# ============================================================
+
 
 def cargar_datos_iniciales():
 
@@ -58,9 +34,9 @@ def cargar_datos_iniciales():
         siguiente_id += 1
 
 
-# ============================================================
+
 # MOSTRAR ENCABEZADO
-# ============================================================
+
 
 def mostrar_encabezado(titulo):
 
@@ -70,9 +46,8 @@ def mostrar_encabezado(titulo):
     print("=" * 55)
 
 
-# ============================================================
 # VALIDAR ESTADO
-# ============================================================
+
 
 def validar_estado():
 
@@ -98,9 +73,9 @@ def validar_estado():
         print("\nERROR: El estado ingresado no es válido.")
 
 
-# ============================================================
+
 # VALIDAR NÚMERO DE MESA
-# ============================================================
+
 
 def validar_numero_mesa():
 
@@ -138,9 +113,9 @@ def validar_numero_mesa():
             print("ERROR: Debe ingresar un número entero.")
 
 
-# ============================================================
+
 # BUSCAR MESA INTERNAMENTE
-# ============================================================
+
 
 def obtener_mesa_por_id(id_mesa):
 
@@ -153,9 +128,9 @@ def obtener_mesa_por_id(id_mesa):
     return None
 
 
-# ============================================================
+
 # CREATE - CREAR MESA
-# ============================================================
+
 
 def crear_mesa():
 
@@ -186,9 +161,8 @@ def crear_mesa():
     siguiente_id += 1
 
 
-# ============================================================
 # READ - LISTAR TODAS LAS MESAS
-# ============================================================
+
 
 def listar_mesas():
 
@@ -221,9 +195,8 @@ def listar_mesas():
     print("Total de mesas:", len(mesas))
 
 
-# ============================================================
 # READ - BUSCAR POR ID
-# ============================================================
+
 
 def buscar_mesa_id():
 
@@ -256,9 +229,9 @@ def buscar_mesa_id():
         print("\nNo existe una mesa con ese ID.")
 
 
-# ============================================================
+
 # READ - BUSCAR POR NÚMERO
-# ============================================================
+
 
 def buscar_mesa_numero():
 
@@ -291,9 +264,8 @@ def buscar_mesa_numero():
     print("\nNo existe una mesa con ese número.")
 
 
-# ============================================================
 # UPDATE - ACTUALIZAR MESA
-# ============================================================
+
 
 def actualizar_mesa():
 
@@ -380,9 +352,8 @@ def actualizar_mesa():
     print("Nuevo estado:", mesa["estado"])
 
 
-# ============================================================
 # UPDATE - CAMBIAR SOLO EL ESTADO
-# ============================================================
+
 
 def cambiar_estado():
 
@@ -418,9 +389,8 @@ def cambiar_estado():
     print("Nuevo estado:", nuevo_estado)
 
 
-# ============================================================
 # DELETE - ELIMINAR MESA
-# ============================================================
+
 
 def eliminar_mesa():
 
@@ -466,9 +436,9 @@ def eliminar_mesa():
         print("\nOperación cancelada.")
 
 
-# ============================================================
+
 # FILTRAR POR ESTADO
-# ============================================================
+
 
 def filtrar_por_estado():
 
@@ -507,9 +477,9 @@ def filtrar_por_estado():
     print("Cantidad encontrada:", len(resultados))
 
 
-# ============================================================
+
 # ESTADÍSTICAS
-# ============================================================
+
 
 def mostrar_estadisticas():
 
@@ -553,18 +523,17 @@ def mostrar_estadisticas():
         )
 
 
-# ============================================================
 # PAUSA
-# ============================================================
+
 
 def pausar():
 
     input("\nPresione ENTER para continuar...")
 
 
-# ============================================================
+
 # MENÚ PRINCIPAL
-# ============================================================
+
 
 def mostrar_menu():
 
@@ -651,9 +620,9 @@ def mostrar_menu():
             pausar()
 
 
-# ============================================================
+
 # INICIO DEL PROGRAMA
-# ============================================================
+
 
 print("\n")
 print("=" * 55)
