@@ -7,9 +7,7 @@ def test_crud_producto():
     db = SessionLocal()
 
     try:
-        # =========================
-        # CREATE
-        # =========================
+
 
         producto = Producto(
             nombre="Producto de prueba",
@@ -32,10 +30,7 @@ def test_crud_producto():
             f"\nProducto creado con ID: {id_producto}"
         )
 
-        # =========================
-        # READ
-        # =========================
-
+        
         producto_consultado = db.query(
             Producto
         ).filter(
@@ -47,10 +42,7 @@ def test_crud_producto():
 
         print("Producto consultado correctamente")
 
-        # =========================
-        # UPDATE
-        # =========================
-
+        
         producto_consultado.nombre = "Producto actualizado"
         producto_consultado.precio = 15000.00
 
@@ -62,9 +54,7 @@ def test_crud_producto():
 
         print("Producto actualizado correctamente")
 
-        # =========================
-        # DELETE
-        # =========================
+
 
         db.delete(producto_consultado)
         db.commit()
