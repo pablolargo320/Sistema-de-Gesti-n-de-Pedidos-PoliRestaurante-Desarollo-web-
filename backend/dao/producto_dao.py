@@ -1,134 +1,104 @@
-from database.connection import get_connection
+from backend.database.database import SessionLocal
+from backend.entities.producto import Producto
 
 
 class ProductoDAO:
 
     def crear(self, producto):
-        conexion = get_connection()
-        cursor = conexion.cursor()
 
-        sql = """
-            INSERT INTO producto
-            (nombre, descripcion, precio, disponible, id_categoria)
-            VALUES (%s, %s, %s, %s, %s)
-        """
+        db = SessionLocal()
 
-        valores = (
-            producto.nombre,
-            producto.descripcion,
-            producto.precio,
-            producto.disponible,
-            producto.id_categoria
-        )
+        try:
+            db.add(producto)
+            db.commit()
+            db.refresh(producto)
 
-        cursor.execute(sql, valores)
-        conexion.commit()
+            return producto
 
-        producto.id_producto = cursor.lastrowid
+        except Exception:
+            db.rollback()
+            raise
 
-        cursor.close()
-        conexion.close()
-
-        return producto
-
-    def obtener_todos(self):
-        conexion = get_connection()
-        cursor = conexion.cursor(dictionary=True)
-
-        sql = """
-            SELECT
-                id_producto,
-                nombre,
-                descripcion,
-                precio,
-                disponible,
-                id_categoria
-            FROM producto
-        """
-
-        cursor.execute(sql)
-
-        productos = cursor.fetchall()
-
-        cursor.close()
-        conexion.close()
-
-        return productos
+        finally:
+            db.close()
 
     def obtener_por_id(self, id_producto):
-        conexion = get_connection()
-        cursor = conexion.cursor(dictionary=True)
 
-        sql = """
-            SELECT
-                id_producto,
-                nombre,
-                descripcion,
-                precio,
-                disponible,
-                id_categoria
-            FROM producto
-            WHERE id_producto = %s
-        """
+        db = SessionLocal()
 
-        cursor.execute(sql, (id_producto,))
+        try:
+            return db.query(Producto).filter(
+                Producto.id_producto == id_producto
+            ).first()
 
-        producto = cursor.fetchone()
+        finally:
+            db.close()
 
-        cursor.close()
-        conexion.close()
+    def obtener_todos(self):
 
-        return producto
+        db = SessionLocal()
 
-    def actualizar(self, id_producto, producto):
-        conexion = get_connection()
-        cursor = conexion.cursor()
+        try:
+            return db.query(Producto).all()
 
-        sql = """
-            UPDATE producto
-            SET
-                nombre = %s,
-                descripcion = %s,
-                precio = %s,
-                disponible = %s,
-                id_categoria = %s
-            WHERE id_producto = %s
-        """
+        finally:
+            db.close()
 
-        valores = (
-            producto.nombre,
-            producto.descripcion,
-            producto.precio,
-            producto.disponible,
-            producto.id_categoria,
-            id_producto
-        )
+    def actualizar(self, id_producto, datos):
 
-        cursor.execute(sql, valores)
-        conexion.commit()
+        db = SessionLocal()
 
-        filas_afectadas = cursor.rowcount
+        try:
 
-        cursor.close()
-        conexion.close()
+            producto = db.query(Producto).filter(
+                Producto.id_producto == id_producto
+            ).first()
 
-        return filas_afectadas
+            if producto is None:
+                return None
+
+            producto.nombre = datos["nombre"]
+            producto.descripcion = datos["descripcion"]
+            producto.precio = datos["precio"]
+            producto.disponible = datos["disponible"]
+            producto.id_categoria = datos["id_categoria"]
+            producto.Administrador_id_administrador = (
+                datos.get("Administrador_id_administrador")
+            )
+
+            db.commit()
+            db.refresh(producto)
+
+            return producto
+
+        except Exception:
+            db.rollback()
+            raise
+
+        finally:
+            db.close()
 
     def eliminar(self, id_producto):
-        conexion = get_connection()
-        cursor = conexion.cursor()
 
-        sql = """
-            DELETE FROM producto
-            WHERE id_producto = %s
-        """
+        db = SessionLocal()
 
-        cursor.execute(sql, (id_producto,))
-        conexion.commit()
+        try:
 
-        filas_afectadas = cursor.rowcount
+            producto = db.query(Producto).filter(
+                Producto.id_producto == id_producto
+            ).first()
 
-        cursor.close()
-        conexion.close()
+            if producto is None:
+                return False
 
-        return filas_afectadas
+            db.delete(producto)
+            db.commit()
+
+            return True
+
+        except Exception:
+            db.rollback()
+            raise
+
+        finally:
+            db.close()

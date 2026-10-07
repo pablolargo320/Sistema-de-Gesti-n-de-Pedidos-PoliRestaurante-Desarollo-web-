@@ -1,17 +1,45 @@
-class Producto:
+from sqlalchemy import Column, Integer, String, Numeric, Boolean, ForeignKey
+from backend.database.database import Base
 
-    def __init__(
-        self,
-        id_producto=None,
-        nombre=None,
-        descripcion=None,
-        precio=None,
-        disponible=None,
-        id_categoria=None
-    ):
-        self.id_producto = id_producto
-        self.nombre = nombre
-        self.descripcion = descripcion
-        self.precio = precio
-        self.disponible = disponible
-        self.id_categoria = id_categoria
+
+class Producto(Base):
+
+    __tablename__ = "producto"
+
+    id_producto = Column(
+        Integer,
+        primary_key=True,
+        autoincrement=True
+    )
+
+    nombre = Column(
+        String(45),
+        nullable=False
+    )
+
+    descripcion = Column(
+        String(100),
+        nullable=True
+    )
+
+    precio = Column(
+        Numeric(10, 2),
+        nullable=False
+    )
+
+    disponible = Column(
+        Boolean,
+        nullable=False
+    )
+
+    id_categoria = Column(
+        Integer,
+        ForeignKey("categoria.id_categoria"),
+        nullable=False
+    )
+
+    Administrador_id_administrador = Column(
+        Integer,
+        ForeignKey("Administrador.id_administrador"),
+        nullable=True
+    )
