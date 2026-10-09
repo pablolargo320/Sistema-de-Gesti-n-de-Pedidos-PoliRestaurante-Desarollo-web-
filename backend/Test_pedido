@@ -1,0 +1,538 @@
+from decimal import Decimal
+
+from backend.dao.pedido_dao import PedidoDAO
+from backend.entities.pedido import Pedido
+
+
+dao = PedidoDAO()
+
+
+def mostrar_pedido(pedido):
+
+    print("\n----------------------------------------")
+    print("          INFORMACIÓN DEL PEDIDO")
+    print("----------------------------------------")
+
+    print("ID:", pedido["id_pedido"])
+    print("Fecha:", pedido["fecha_creacion"])
+    print("Estado:", pedido["estado"])
+    print("Total: $", format(
+        float(pedido["total"]),
+        ",.2f"
+    ))
+    print("Tipo:", pedido["tipo_pedido"])
+
+    if pedido["id_mesa"] is None:
+        print("Mesa: No aplica")
+    else:
+        print("ID mesa:", pedido["id_mesa"])
+
+    print("ID cliente:", pedido["id_cliente"])
+
+    print(
+        "ID administrador:",
+        pedido["Administrador_id_administrador"]
+    )
+
+    print(
+        "ID método de pago:",
+        pedido["metodo_pago_id_metodo_pago"]
+    )
+
+    if pedido["domiciliario_id_domiciliario"] is None:
+        print("Domiciliario: No aplica")
+    else:
+        print(
+            "ID domiciliario:",
+            pedido["domiciliario_id_domiciliario"]
+        )
+
+    print("----------------------------------------")
+
+
+def crear_pedido():
+
+    print("\n=== CREAR PEDIDO ===")
+
+    try:
+
+        estado = input("Estado (Entregado/Pendiente/Preparando): ").strip()
+
+        if estado == "":
+            print("El estado no puede estar vacío.")
+            return
+
+        total = Decimal(
+            input("Total: ")
+        )
+
+        if total < 0:
+            print("El total no puede ser negativo.")
+            return
+
+        tipo_pedido = input(
+            "Tipo de pedido (Mesa/Domicilio): "
+        ).strip()
+
+        if tipo_pedido.lower() not in [
+            "mesa",
+            "domicilio"
+        ]:
+            print(
+                "El tipo debe ser Mesa o Domicilio."
+            )
+            return
+
+        id_mesa = input(
+            "ID de mesa (Enter si no aplica): "
+        ).strip()
+
+        if id_mesa == "":
+            id_mesa = None
+        else:
+            id_mesa = int(id_mesa)
+
+        id_cliente = int(
+            input("ID del cliente: ")
+        )
+
+        id_administrador = int(
+            input("ID del administrador: ")
+        )
+
+        id_metodo_pago = int(
+            input("ID del método de pago: ")
+        )
+
+        id_domiciliario = input(
+            "ID del domiciliario "
+            "(Enter si no aplica): "
+        ).strip()
+
+        if id_domiciliario == "":
+            id_domiciliario = None
+        else:
+            id_domiciliario = int(
+                id_domiciliario
+            )
+
+        pedido = Pedido(
+            estado=estado,
+            total=total,
+            tipo_pedido=tipo_pedido,
+            id_mesa=id_mesa,
+            id_cliente=id_cliente,
+            Administrador_id_administrador=id_administrador,
+            metodo_pago_id_metodo_pago=id_metodo_pago,
+            domiciliario_id_domiciliario=id_domiciliario
+        )
+
+        pedido_creado = dao.crear(pedido)
+
+        print("\nPEDIDO CREADO CORRECTAMENTE")
+        print("ID asignado:", pedido_creado.id_pedido)
+
+    except ValueError:
+
+        print(
+            "\nError: ingrese correctamente "
+            "los valores."
+        )
+
+    except Exception as e:
+
+        print("\nError al crear el pedido:")
+        print(e)
+
+
+def listar_pedidos():
+
+    print("\n=== TODOS LOS PEDIDOS ===")
+
+    try:
+
+        pedidos = dao.obtener_todos()
+
+        if not pedidos:
+
+            print("No hay pedidos registrados.")
+            return
+
+        for pedido in pedidos:
+
+            mostrar_pedido(pedido)
+
+    except Exception as e:
+
+        print("\nError:")
+        print(e)
+
+
+def buscar_pedido():
+
+    print("\n=== BUSCAR PEDIDO ===")
+
+    try:
+
+        id_pedido = int(
+            input("ID del pedido: ")
+        )
+
+        pedido = dao.obtener_por_id(
+            id_pedido
+        )
+
+        if pedido:
+
+            mostrar_pedido(pedido)
+
+        else:
+
+            print(
+                "\nNo existe un pedido con ese ID."
+            )
+
+    except ValueError:
+
+        print("El ID debe ser numérico.")
+
+    except Exception as e:
+
+        print("\nError:")
+        print(e)
+
+
+def actualizar_pedido():
+
+    print("\n=== ACTUALIZAR PEDIDO ===")
+
+    try:
+
+        id_pedido = int(
+            input("ID del pedido: ")
+        )
+
+        pedido_actual = dao.obtener_por_id(
+            id_pedido
+        )
+
+        if not pedido_actual:
+
+            print(
+                "\nNo existe un pedido con ese ID."
+            )
+
+            return
+
+        print("\nPedido actual:")
+
+        mostrar_pedido(pedido_actual)
+
+        print("\nIngrese los nuevos datos:")
+
+        estado = input(
+            "Nuevo estado: "
+        ).strip()
+
+        total = Decimal(
+            input("Nuevo total: ")
+        )
+
+        tipo_pedido = input(
+            "Nuevo tipo (Mesa/Domicilio): "
+        ).strip()
+
+        if tipo_pedido.lower() not in [
+            "mesa",
+            "domicilio"
+        ]:
+
+            print(
+                "El tipo debe ser Mesa o Domicilio."
+            )
+
+            return
+
+        id_mesa = input(
+            "Nuevo ID de mesa "
+            "(Enter si no aplica): "
+        ).strip()
+
+        if id_mesa == "":
+            id_mesa = None
+        else:
+            id_mesa = int(id_mesa)
+
+        id_cliente = int(
+            input("Nuevo ID de cliente: ")
+        )
+
+        id_administrador = int(
+            input(
+                "Nuevo ID de administrador: "
+            )
+        )
+
+        id_metodo_pago = int(
+            input(
+                "Nuevo ID de método de pago: "
+            )
+        )
+
+        id_domiciliario = input(
+            "Nuevo ID de domiciliario "
+            "(Enter si no aplica): "
+        ).strip()
+
+        if id_domiciliario == "":
+            id_domiciliario = None
+        else:
+            id_domiciliario = int(
+                id_domiciliario
+            )
+
+        pedido = Pedido(
+            estado=estado,
+            total=total,
+            tipo_pedido=tipo_pedido,
+            id_mesa=id_mesa,
+            id_cliente=id_cliente,
+            Administrador_id_administrador=id_administrador,
+            metodo_pago_id_metodo_pago=id_metodo_pago,
+            domiciliario_id_domiciliario=id_domiciliario
+        )
+
+        filas = dao.actualizar(
+            id_pedido,
+            pedido
+        )
+
+        if filas > 0:
+
+            print(
+                "\nPEDIDO ACTUALIZADO CORRECTAMENTE."
+            )
+
+        else:
+
+            print(
+                "\nNo se realizaron cambios."
+            )
+
+    except ValueError:
+
+        print(
+            "\nError: ingrese correctamente "
+            "los valores."
+        )
+
+    except Exception as e:
+
+        print("\nError al actualizar:")
+        print(e)
+
+
+def eliminar_pedido():
+
+    print("\n=== ELIMINAR PEDIDO ===")
+
+    try:
+
+        id_pedido = int(
+            input("ID del pedido: ")
+        )
+
+        pedido = dao.obtener_por_id(
+            id_pedido
+        )
+
+        if not pedido:
+
+            print(
+                "\nNo existe un pedido con ese ID."
+            )
+
+            return
+
+        print("\nPedido que se va a eliminar:")
+
+        mostrar_pedido(pedido)
+
+        confirmacion = input(
+            "\n¿Está seguro de eliminarlo? (s/n): "
+        ).strip().lower()
+
+        if confirmacion != "s":
+
+            print("\nOperación cancelada.")
+            return
+
+        filas = dao.eliminar(
+            id_pedido
+        )
+
+        if filas > 0:
+
+            print(
+                "\nPEDIDO ELIMINADO CORRECTAMENTE."
+            )
+
+        else:
+
+            print(
+                "\nNo se pudo eliminar el pedido."
+            )
+
+    except ValueError:
+
+        print("El ID debe ser numérico.")
+
+    except Exception as e:
+
+        print("\nNo se pudo eliminar el pedido.")
+
+        print("Motivo:")
+        print(e)
+
+
+def buscar_por_estado():
+
+    print("\n=== BUSCAR POR ESTADO ===")
+
+    estado = input(
+        "Ingrese el estado: "
+    ).strip()
+
+    try:
+
+        pedidos = dao.obtener_por_estado(
+            estado
+        )
+
+        if not pedidos:
+
+            print(
+                "\nNo hay pedidos con ese estado."
+            )
+
+            return
+
+        print(
+            f"\nPedidos con estado '{estado}':"
+        )
+
+        for pedido in pedidos:
+
+            mostrar_pedido(pedido)
+
+    except Exception as e:
+
+        print("\nError:")
+        print(e)
+
+
+def mostrar_resumen():
+
+    print("\n=== RESUMEN DE PEDIDOS ===")
+
+    try:
+
+        resumen = dao.obtener_resumen()
+
+        print(
+            "Cantidad de pedidos:",
+            resumen["cantidad_pedidos"]
+        )
+
+        print(
+            "Total de ventas: $",
+            format(
+                float(resumen["total_ventas"]),
+                ",.2f"
+            )
+        )
+
+    except Exception as e:
+
+        print("\nError:")
+        print(e)
+
+
+def pausar():
+
+    input(
+        "\nPresione ENTER para continuar..."
+    )
+
+
+def mostrar_menu():
+
+    while True:
+
+        print("\n")
+        print("================================")
+        print("         CRUD DE PEDIDOS")
+        print("================================")
+        print("1. Crear pedido")
+        print("2. Ver todos los pedidos")
+        print("3. Buscar pedido por ID")
+        print("4. Actualizar pedido")
+        print("5. Eliminar pedido")
+        print("6. Buscar por estado")
+        print("7. Resumen de ventas")
+        print("0. Salir")
+        print("================================")
+
+        opcion = input(
+            "Seleccione una opción: "
+        ).strip()
+
+        if opcion == "1":
+
+            crear_pedido()
+            pausar()
+
+        elif opcion == "2":
+
+            listar_pedidos()
+            pausar()
+
+        elif opcion == "3":
+
+            buscar_pedido()
+            pausar()
+
+        elif opcion == "4":
+
+            actualizar_pedido()
+            pausar()
+
+        elif opcion == "5":
+
+            eliminar_pedido()
+            pausar()
+
+        elif opcion == "6":
+
+            buscar_por_estado()
+            pausar()
+
+        elif opcion == "7":
+
+            mostrar_resumen()
+            pausar()
+
+        elif opcion == "0":
+
+            print("\nPrograma finalizado.")
+            break
+
+        else:
+
+            print("\nOpción no válida.")
+            pausar()
+
+
+if __name__ == "__main__":
+
+    mostrar_menu()
