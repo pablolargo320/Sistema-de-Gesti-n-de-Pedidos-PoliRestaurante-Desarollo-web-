@@ -1,8 +1,14 @@
 
+import os
 from sqlalchemy import text
 
 from backend.database.database import engine, SessionLocal
 from backend.entities.categoria import Categoria
+
+
+def pausar(mensaje):
+    if os.getenv("PAUSAR_TEST_DB") == "1":
+        input(f"\n{mensaje}\nPresiona ENTER para continuar...")
 
 
 def test_conexion_orm():
@@ -22,15 +28,14 @@ def test_crud_categoria_orm():
     id_categoria = None
 
     try:
-        categoria = Categoria(
-            nombre="Categoria ORM Prueba"
-        )
+        categoria = Categoria(nombre="Categoria ORM Prueba")
         db.add(categoria)
         db.commit()
         db.refresh(categoria)
 
         id_categoria = categoria.id_categoria
-        assert id_categoria is not None
+        print(f"\nCategoria creada. ID: {id_categoria}")
+        pausar("Revisa en Workbench el registro recién creado.")
 
         consultada = db.query(Categoria).filter(
             Categoria.id_categoria == id_categoria
@@ -38,22 +43,29 @@ def test_crud_categoria_orm():
 
         assert consultada is not None
         assert consultada.nombre == "Categoria ORM Prueba"
+        print("Categoria consultada:", consultada.nombre)
+        pausar("Comprueba los datos consultados.")
 
         consultada.nombre = "Categoria ORM Actualizada"
         db.commit()
         db.refresh(consultada)
 
         assert consultada.nombre == "Categoria ORM Actualizada"
+        print("Categoria actualizada:", consultada.nombre)
+        pausar("Revisa en Workbench el nombre actualizado.")
 
         db.delete(consultada)
         db.commit()
-        id_categoria = None
 
         eliminada = db.query(Categoria).filter(
-            Categoria.id_categoria == consultada.id_categoria
+            Categoria.id_categoria == id_categoria
         ).first()
 
         assert eliminada is None
+        print(f"Categoria {id_categoria} eliminada correctamente.")
+
+        id_categoria = None
+        pausar("Comprueba que el registro ya no existe.")
 
     except Exception:
         db.rollback()
@@ -62,12 +74,12 @@ def test_crud_categoria_orm():
     finally:
         if id_categoria is not None:
             try:
-                categoria_restante = db.query(Categoria).filter(
+                restante = db.query(Categoria).filter(
                     Categoria.id_categoria == id_categoria
                 ).first()
 
-                if categoria_restante is not None:
-                    db.delete(categoria_restante)
+                if restante is not None:
+                    db.delete(restante)
                     db.commit()
             except Exception:
                 db.rollback()
