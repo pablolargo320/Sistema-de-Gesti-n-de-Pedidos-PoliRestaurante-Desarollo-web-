@@ -1,11 +1,12 @@
-from dao.producto_dao import ProductoDAO
-from entities.producto import Producto
+from backend.dao.producto_dao import ProductoDAO
+from backend.entities.producto import Producto
 
 
 dao = ProductoDAO()
 
 
 def crear_producto():
+
     print("\n=== CREAR PRODUCTO ===")
 
     nombre = input("Nombre: ")
@@ -29,23 +30,30 @@ def crear_producto():
 
 
 def buscar_producto():
+
     print("\n=== BUSCAR PRODUCTO ===")
 
-    id_producto = int(input("Ingrese el ID del producto: "))
+    id_producto = int(
+        input("Ingrese el ID del producto: ")
+    )
 
     producto = dao.obtener_por_id(id_producto)
 
     if producto:
         print("\nProducto encontrado:")
         print(producto)
+
     else:
         print("\nNo se encontró un producto con ese ID.")
 
 
 def actualizar_producto():
+
     print("\n=== ACTUALIZAR PRODUCTO ===")
 
-    id_producto = int(input("Ingrese el ID del producto que desea actualizar: "))
+    id_producto = int(
+        input("Ingrese el ID del producto que desea actualizar: ")
+    )
 
     producto_actual = dao.obtener_por_id(id_producto)
 
@@ -61,8 +69,12 @@ def actualizar_producto():
     nombre = input("Nuevo nombre: ")
     descripcion = input("Nueva descripción: ")
     precio = float(input("Nuevo precio: "))
-    disponible = int(input("¿Está disponible? (1 = Sí, 0 = No): "))
-    id_categoria = int(input("Nuevo ID de categoría: "))
+    disponible = int(
+        input("¿Está disponible? (1 = Sí, 0 = No): ")
+    )
+    id_categoria = int(
+        input("Nuevo ID de categoría: ")
+    )
 
     producto = Producto(
         nombre=nombre,
@@ -84,9 +96,12 @@ def actualizar_producto():
 
 
 def eliminar_producto():
+
     print("\n=== ELIMINAR PRODUCTO ===")
 
-    id_producto = int(input("Ingrese el ID del producto que desea eliminar: "))
+    id_producto = int(
+        input("Ingrese el ID del producto que desea eliminar: ")
+    )
 
     producto = dao.obtener_por_id(id_producto)
 
@@ -103,7 +118,9 @@ def eliminar_producto():
 
     if confirmacion.lower() == "s":
 
-        filas_eliminadas = dao.eliminar(id_producto)
+        filas_eliminadas = dao.eliminar(
+            id_producto
+        )
 
         if filas_eliminadas > 0:
             print("\nProducto eliminado correctamente.")
@@ -115,16 +132,27 @@ def eliminar_producto():
 
 
 def obtener_todos():
+
     print("\n=== TODOS LOS PRODUCTOS ===")
 
     productos = dao.obtener_todos()
 
     if not productos:
-        print("No hay productos registrados.")
+        print("\nNo hay productos registrados.")
         return
 
     for producto in productos:
-        print(producto)
+        print(
+            f"""
+ID: {producto['id_producto']}
+Nombre: {producto['nombre']}
+Descripción: {producto['descripcion']}
+Precio: {producto['precio']}
+Disponible: {producto['disponible']}
+ID Categoría: {producto['id_categoria']}
+--------------------------------
+"""
+        )
 
 
 def mostrar_menu():
@@ -143,7 +171,9 @@ def mostrar_menu():
         print("0. Salir")
         print("================================")
 
-        opcion = input("Seleccione una opción: ")
+        opcion = input(
+            "Seleccione una opción: "
+        )
 
         if opcion == "1":
             crear_producto()
@@ -168,4 +198,5 @@ def mostrar_menu():
             print("\nOpción no válida. Intente nuevamente.")
 
 
-mostrar_menu()
+if __name__ == "__main__":
+    mostrar_menu()
