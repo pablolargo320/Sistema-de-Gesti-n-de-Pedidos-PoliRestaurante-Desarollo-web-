@@ -1,0 +1,13 @@
+$kind: http-request
+url: "{{base_url}}/api/mesas/"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "numero": 6,
+      "estado": "Disponible"
+    }
+order: 3000

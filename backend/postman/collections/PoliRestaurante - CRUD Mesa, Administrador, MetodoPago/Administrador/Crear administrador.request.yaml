@@ -1,0 +1,16 @@
+$kind: http-request
+url: "{{base_url}}/api/administradores/"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "nombre": "Jean Perez",
+      "correo": "jean@polirestaurante.com",
+      "usuario": "jeanadmin",
+      "contrasena": "12345",
+      "telefono": "3009998877"
+    }
+order: 3000
