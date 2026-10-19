@@ -1,3 +1,4 @@
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 import os
@@ -25,3 +26,15 @@ SessionLocal = sessionmaker(
 )
 
 Base = declarative_base()
+
+
+def registrar_modelos():
+    from backend.entities.administrador import Administrador
+    from backend.entities.cliente import Cliente
+    from backend.entities.domiciliario import Domiciliario
+    from backend.entities.mesa import Mesa
+    from backend.entities.metodo_pago import MetodoPago
+    from backend.entities.pedido import Pedido
+    from backend.entities.producto import Producto
+    from backend.entities.detalle_pedido import DetallePedido
+    from backend.entities.categoria import Categoria

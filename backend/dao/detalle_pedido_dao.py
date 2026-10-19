@@ -1,6 +1,10 @@
 
 from backend.database.database import SessionLocal
 from backend.entities.detalle_pedido import DetallePedido
+from backend.database.database import SessionLocal, registrar_modelos
+
+
+registrar_modelos()
 
 
 class DetallePedidoDAO:
