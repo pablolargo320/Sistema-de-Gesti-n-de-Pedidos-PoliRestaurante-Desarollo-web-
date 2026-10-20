@@ -1,5 +1,5 @@
-from database.connection import getConnection, closeConnection
-from entities.administrador import Administrador
+from backend.database.connection import getConnection, closeConnection
+from backend.entities.administrador import Administrador
 
 
 def findAll():

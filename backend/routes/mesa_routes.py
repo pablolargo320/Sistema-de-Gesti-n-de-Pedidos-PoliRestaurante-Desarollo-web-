@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from dao import mesa_dao
+from backend.dao import mesa_dao
 
 mesa_bp = Blueprint("mesa_bp", __name__, url_prefix="/api/mesas")
 

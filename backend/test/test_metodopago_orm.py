@@ -1,5 +1,5 @@
-from database.connection import getSession
-from entities.metodopago import MetodoPago
+from backend.database.connection import getSession
+from backend.entities.metodopago import MetodoPago
 
 
 def findAll():

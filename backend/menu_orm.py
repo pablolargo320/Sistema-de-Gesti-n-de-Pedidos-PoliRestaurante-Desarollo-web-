@@ -1,7 +1,7 @@
-from database.connection import getSession
-from entities.mesa import Mesa
-from entities.administrador import Administrador
-from entities.metodopago import MetodoPago
+from backend.database.connection import getSession
+from backend.entities.mesa import Mesa
+from backend.entities.administrador import Administrador
+from backend.entities.metodopago import MetodoPago
 
 
 def menuMesa():

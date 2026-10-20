@@ -1,5 +1,5 @@
 import unittest
-from dao import mesa_dao
+from backend.dao import mesa_dao
 
 
 class TestMesaDriver(unittest.TestCase):

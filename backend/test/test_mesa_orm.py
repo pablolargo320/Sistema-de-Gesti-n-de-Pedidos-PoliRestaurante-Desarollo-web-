@@ -1,6 +1,6 @@
 import unittest
-from database.connection import getSession
-from entities.mesa import Mesa
+from backend.database.connection import getSession
+from backend.entities.mesa import Mesa
 
 
 class TestMesaOrm(unittest.TestCase):

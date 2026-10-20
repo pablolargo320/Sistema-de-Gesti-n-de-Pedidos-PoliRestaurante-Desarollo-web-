@@ -1,0 +1,55 @@
+class Pedido:
+
+    def __init__(
+        self,
+        estado,
+        total,
+        tipo_pedido,
+        id_cliente,
+        Administrador_id_administrador,
+        metodo_pago_id_metodo_pago,
+        id_mesa=None,
+        domiciliario_id_domiciliario=None,
+        id_pedido=None,
+        fecha_creacion=None
+    ):
+
+        self.id_pedido = id_pedido
+        self.fecha_creacion = fecha_creacion
+
+        self.estado = estado
+        self.total = total
+        self.tipo_pedido = tipo_pedido
+        self.id_mesa = id_mesa
+        self.id_cliente = id_cliente
+
+        self.Administrador_id_administrador = (
+            Administrador_id_administrador
+        )
+
+        self.metodo_pago_id_metodo_pago = (
+            metodo_pago_id_metodo_pago
+        )
+
+        self.domiciliario_id_domiciliario = (
+            domiciliario_id_domiciliario
+        )
+
+    def __repr__(self):
+
+        return (
+            f"Pedido("
+            f"id_pedido={self.id_pedido}, "
+            f"estado='{self.estado}', "
+            f"total={self.total}, "
+            f"tipo_pedido='{self.tipo_pedido}', "
+            f"id_mesa={self.id_mesa}, "
+            f"id_cliente={self.id_cliente}, "
+            f"Administrador_id_administrador="
+            f"{self.Administrador_id_administrador}, "
+            f"metodo_pago_id_metodo_pago="
+            f"{self.metodo_pago_id_metodo_pago}, "
+            f"domiciliario_id_domiciliario="
+            f"{self.domiciliario_id_domiciliario}"
+            f")"
+        )

@@ -1,4 +1,4 @@
-from dao import mesa_dao, administrador_dao, metodopago_dao
+from backend.dao import mesa_dao, administrador_dao, metodopago_dao
 
 
 def menuMesa():

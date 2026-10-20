@@ -1,5 +1,5 @@
-from database.connection import getConnection, closeConnection
-from entities.mesa import Mesa
+from backend.database.connection import getConnection, closeConnection
+from backend.entities.mesa import Mesa
 
 
 def findAll():

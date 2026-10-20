@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from dao import administrador_dao
+from backend.dao import administrador_dao
 
 administrador_bp = Blueprint("administrador_bp", __name__, url_prefix="/api/administradores")
 

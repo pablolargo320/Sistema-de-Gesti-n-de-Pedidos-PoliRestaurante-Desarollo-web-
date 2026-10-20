@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from dao import metodopago_dao
+from backend.dao import metodopago_dao
 
 metodopago_bp = Blueprint("metodopago_bp", __name__, url_prefix="/api/metodos-pago")
 

@@ -1,7 +1,5 @@
-import menu_driver
-import menu_orm
-
-
+from backend import menu_driver
+from backend import menu_orm
 def mostrarBienvenida():
     print("=" * 50)
     print("  SISTEMA DE GESTION - POLIRESTAURANTE")

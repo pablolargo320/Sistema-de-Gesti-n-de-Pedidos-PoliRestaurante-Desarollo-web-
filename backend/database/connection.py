@@ -1,30 +1,43 @@
+import os
+from pathlib import Path
 import mysql.connector
 from urllib.parse import quote_plus
+from dotenv import load_dotenv
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String
 from sqlalchemy.orm import sessionmaker, registry
 
-from entities.mesa import Mesa
-from entities.administrador import Administrador
-from entities.metodopago import MetodoPago
+from backend.entities.mesa import Mesa
+from backend.entities.administrador import Administrador
+from backend.entities.metodopago import MetodoPago
 
-DB_USER = "root"
-DB_PASSWORD = "Woxfan#2026"
-DB_HOST = "127.0.0.1"
-DB_PORT = "3306"
-DB_NAME = "polirestaurante1"
+load_dotenv(Path(__file__).resolve().parents[1] / ".env")
+
+DB_USER = os.getenv("DB_USER", "root")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+DB_HOST = os.getenv("DB_HOST", "127.0.0.1")
+DB_PORT = os.getenv("DB_PORT", "3306")
+DB_NAME = os.getenv("DB_NAME", "polirestaurante1")
+
+if DB_PASSWORD is None:
+    raise RuntimeError("DB_PASSWORD no está definida. Crea un archivo .env con las credenciales de la base de datos.")
 
 
-# ---------- Conexion estilo driver (mysql.connector), igual a PersonaDAO ----------
+# ---------- Conexion de tus compañeros (driver) ----------
+def get_connection():
+    return mysql.connector.connect(
+        host=DB_HOST,
+        port=DB_PORT,
+        user=DB_USER,
+        password=DB_PASSWORD,
+        database=DB_NAME
+    )
+
+
+# ---------- Conexion del CRUD Mesa / Administrador / MetodoPago (driver) ----------
 def getConnection():
     conn = None
     try:
-        conn = mysql.connector.connect(
-            user=DB_USER,
-            password=DB_PASSWORD,
-            host=DB_HOST,
-            database=DB_NAME,
-            port=DB_PORT
-        )
+        conn = get_connection()
     except Exception:
         print("no se puede conectar a la base de datos")
         return None
@@ -37,9 +50,7 @@ def closeConnection(conn):
         conn.close()
 
 
-# ---------- Misma base de datos, expuesta como ORM (SQLAlchemy) ----------
-# La contraseña se codifica porque puede traer caracteres especiales (p.ej. '#')
-# que romperían la URL de conexión si van tal cual.
+# ---------- ORM (SQLAlchemy) ----------
 DATABASE_URL = f"mysql+mysqlconnector://{DB_USER}:{quote_plus(DB_PASSWORD)}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 engine = create_engine(DATABASE_URL, echo=False, pool_pre_ping=True)
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
@@ -49,8 +60,6 @@ def getSession():
     return SessionLocal()
 
 
-# Las entidades de entities/ se mapean directamente a sus tablas,
-# sin crear clases de modelo separadas.
 metadata = MetaData()
 mapper_registry = registry()
 
