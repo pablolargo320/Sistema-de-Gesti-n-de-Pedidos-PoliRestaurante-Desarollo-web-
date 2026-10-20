@@ -1,30 +1,12 @@
-from sqlalchemy import Column, Integer, String
-from backend.database.database import Base
-
-
-class Mesa(Base):
-    __tablename__ = "mesa"
-
-    id_mesa = Column(Integer, primary_key=True, autoincrement=True)
-    numero = Column(Integer)
-    estado = Column(String(45))
 class Mesa:
-
-    def __init__(
-        self,
-        numero,
-        estado,
-        id_mesa=None
-    ):
+    def __init__(self, id_mesa=None, numero=None, estado=None):
         self.id_mesa = id_mesa
         self.numero = numero
         self.estado = estado
 
-    def __repr__(self):
-        return (
-            f"Mesa("
-            f"id_mesa={self.id_mesa}, "
-            f"numero={self.numero}, "
-            f"estado='{self.estado}'"
-            f")"
-        )
+    def to_dict(self):
+        return {
+            "id_mesa": self.id_mesa,
+            "numero": self.numero,
+            "estado": self.estado
+        }

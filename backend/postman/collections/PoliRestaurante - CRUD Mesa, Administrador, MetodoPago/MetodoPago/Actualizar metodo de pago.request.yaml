@@ -1,0 +1,16 @@
+$kind: http-request
+url: "{{base_url}}/api/metodos-pago/1"
+method: PUT
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "efectivo": 0,
+      "aplicacion": "Daviplata",
+      "tarjeta": null,
+      "descripcion": "Pago por Daviplata actualizado",
+      "estado": 0
+    }
+order: 4000

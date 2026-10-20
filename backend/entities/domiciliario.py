@@ -3,9 +3,15 @@ from backend.database.database import Base
 
 
 class Domiciliario(Base):
+
     __tablename__ = "domiciliario"
 
-    id_domiciliario = Column(Integer, primary_key=True, autoincrement=True)
+    id_domiciliario = Column(
+        Integer,
+        primary_key=True,
+        autoincrement=True
+    )
+
     nombre = Column(String(45))
     apellido = Column(String(45))
     telefono = Column(String(20))

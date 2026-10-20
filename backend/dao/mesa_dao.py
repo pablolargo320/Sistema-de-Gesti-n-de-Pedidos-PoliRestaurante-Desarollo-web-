@@ -1,261 +1,74 @@
- feature/crud-mesa
+from backend.database.connection import getConnection, closeConnection
+from backend.entities.mesa import Mesa
 
-feature/crud-productos
-from backend.database.connection import get_connection
-import mysql.connector
 
+def findAll():
+    conn = getConnection()
+    c = conn.cursor()
 
-class MesaDAO:
+    c.execute("SELECT id_mesa, numero, estado FROM mesa")
+    rows = c.fetchall()
 
-    def crear(self, mesa):
+    closeConnection(conn)
+    return [Mesa(*row).to_dict() for row in rows]
 
-        conexion = get_connection()
-        cursor = conexion.cursor()
 
-        sql = """
-            INSERT INTO mesa
-            (numero, estado)
-            VALUES (%s, %s)
-        """
+def buscarMesaPorId(id_mesa):
+    conn = getConnection()
+    c = conn.cursor()
 
-        valores = (
-            mesa.numero,
-            mesa.estado
-        )
+    c.execute("SELECT id_mesa, numero, estado FROM mesa WHERE id_mesa = %s", (id_mesa,))
+    row = c.fetchone()
 
-        cursor.execute(sql, valores)
-        conexion.commit()
+    closeConnection(conn)
+    return Mesa(*row).to_dict() if row else None
 
-        mesa.id_mesa = cursor.lastrowid
 
-        cursor.close()
-        conexion.close()
+def crearMesa(numero, estado):
+    conn = getConnection()
+    c = conn.cursor()
 
-        return mesa
+    mesaInsert = """INSERT INTO mesa (numero, estado) VALUES (%s, %s)"""
+    val = (numero, estado)
 
-    def obtener_todos(self):
+    c.execute(mesaInsert, val)
+    conn.commit()
+    nuevoId = c.lastrowid
+    print(c.rowcount, "record inserted.")
 
-        conexion = get_connection()
-        cursor = conexion.cursor(dictionary=True)
+    closeConnection(conn)
+    return nuevoId
 
-        sql = """
-            SELECT
-                id_mesa,
-                numero,
-                estado
-            FROM mesa
-            ORDER BY numero
-        """
 
-        cursor.execute(sql)
+def editarMesa(id_mesa, numero, estado):
+    conn = getConnection()
+    c = conn.cursor()
 
-        mesas = cursor.fetchall()
+    mesaUpdate = """UPDATE mesa SET numero = %s,
+    estado = %s
+    WHERE id_mesa = %s"""
+    val = (numero, estado, id_mesa)
 
-        cursor.close()
-        conexion.close()
+    c.execute(mesaUpdate, val)
+    conn.commit()
+    filas = c.rowcount
+    print(filas, "record updated.")
 
-        return mesas
+    closeConnection(conn)
+    return filas
 
-    def obtener_por_id(self, id_mesa):
 
-        conexion = get_connection()
-        cursor = conexion.cursor(dictionary=True)
+def eliminarMesa(id_mesa):
+    conn = getConnection()
+    c = conn.cursor()
 
-        sql = """
-            SELECT
-                id_mesa,
-                numero,
-                estado
-            FROM mesa
-            WHERE id_mesa = %s
-        """
+    mesaDelete = """DELETE FROM mesa WHERE id_mesa = %s"""
+    val = (id_mesa,)
 
-        cursor.execute(sql, (id_mesa,))
+    c.execute(mesaDelete, val)
+    conn.commit()
+    filas = c.rowcount
+    print(filas, "record deleted.")
 
-        mesa = cursor.fetchone()
-
-        cursor.close()
-        conexion.close()
-
-        return mesa
-
-    def obtener_por_numero(self, numero):
-
-        conexion = get_connection()
-        cursor = conexion.cursor(dictionary=True)
-
-        sql = """
-            SELECT
-                id_mesa,
-                numero,
-                estado
-            FROM mesa
-            WHERE numero = %s
-        """
-
-        cursor.execute(sql, (numero,))
-
-        mesa = cursor.fetchone()
-
-        cursor.close()
-        conexion.close()
-
-        return mesa
-
-    def actualizar(self, id_mesa, mesa):
-
-        conexion = get_connection()
-        cursor = conexion.cursor()
-
-        sql = """
-            UPDATE mesa
-            SET
-                numero = %s,
-                estado = %s
-            WHERE id_mesa = %s
-        """
-
-        valores = (
-            mesa.numero,
-            mesa.estado,
-            id_mesa
-        )
-
-        cursor.execute(sql, valores)
-        conexion.commit()
-
-        filas_afectadas = cursor.rowcount
-
-        cursor.close()
-        conexion.close()
-
-        return filas_afectadas
-
-    def cambiar_estado(self, id_mesa, estado):
-
-        conexion = get_connection()
-        cursor = conexion.cursor()
-
-        sql = """
-            UPDATE mesa
-            SET estado = %s
-            WHERE id_mesa = %s
-        """
-
-        valores = (
-            estado,
-            id_mesa
-        )
-
-        cursor.execute(sql, valores)
-        conexion.commit()
-
-        filas_afectadas = cursor.rowcount
-
-        cursor.close()
-        conexion.close()
-
-        return filas_afectadas
-
-    def eliminar(self, id_mesa):
-
-        conexion = get_connection()
-        cursor = conexion.cursor()
-
-        sql = """
-        DELETE FROM mesa
-        WHERE id_mesa = %s
-        """
-
-        try:
-
-            cursor.execute(sql, (id_mesa,))
-            conexion.commit()
-
-            filas_afectadas = cursor.rowcount
-
-            return filas_afectadas
-
-        except mysql.connector.IntegrityError:
-
-            conexion.rollback()
-
-            return -1
-
-        finally:
-
-            cursor.close()
-            conexion.close()
-
-
-    def obtener_por_estado(self, estado):
-
-        conexion = get_connection()
-        cursor = conexion.cursor(dictionary=True)
-
-        sql = """
-            SELECT
-                id_mesa,
-                numero,
-                estado
-            FROM mesa
-            WHERE estado = %s
-            ORDER BY numero
-        """
-
-        cursor.execute(sql, (estado,))
-
-        mesas = cursor.fetchall()
-
-        cursor.close()
-        conexion.close()
-
-        return mesas
-    
-    def actualizar(self, id_mesa, mesa):
-
-        conexion = get_connection()
-        cursor = conexion.cursor()
-
-        sql = """
-            UPDATE mesa
-            SET
-                numero = %s,
-                estado = %s
-        WHERE id_mesa = %s
-        """
-        valores = (
-        mesa.numero,
-        mesa.estado,
-        id_mesa
-        )
-
-        cursor.execute(sql, valores)
-        conexion.commit()
-
-        filas_afectadas = cursor.rowcount
-
-        cursor.close()
-        conexion.close()
-
-        return filas_afectadas
-
-    def eliminar(self, id_mesa):
-
-        conexion = get_connection()
-        cursor = conexion.cursor()
-
-        sql = """
-        DELETE FROM mesa
-        WHERE id_mesa = %s
-        """
-
-        cursor.execute(sql, (id_mesa,))
-        conexion.commit()
-
-        filas_afectadas = cursor.rowcount
-
-        cursor.close()
-        conexion.close()
-
-        return filas_afectadas
+    closeConnection(conn)
+    return filas
