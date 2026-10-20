@@ -1,8 +1,19 @@
+﻿# Variables de entorno
+.env
+backend/.env
+
+# Entorno virtual
 .venv/
+venv/
+env/
+
+# Archivos temporales de Python
 __pycache__/
-*.pyc
-*env
-<<<<<<< HEAD
-=======
+*.py[cod]
+*.egg-info/
+
+# Cache de pruebas
 .pytest_cache/
->>>>>>> origin/main
+
+# Editor
+.vscode/
