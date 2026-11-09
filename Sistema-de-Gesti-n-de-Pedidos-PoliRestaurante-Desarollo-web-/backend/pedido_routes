@@ -1,0 +1,70 @@
+from flask import Blueprint
+
+
+pedido_routes = Blueprint(
+    "pedido_routes",
+    __name__
+)
+
+
+@pedido_routes.route(
+    "/api/pedidos",
+    methods=["POST"]
+)
+def crear_pedido():
+
+    pass
+
+
+@pedido_routes.route(
+    "/api/pedidos",
+    methods=["GET"]
+)
+def obtener_pedidos():
+
+    pass
+
+
+@pedido_routes.route(
+    "/api/pedidos/<int:id_pedido>",
+    methods=["GET"]
+)
+def obtener_pedido(id_pedido):
+
+    pass
+
+
+@pedido_routes.route(
+    "/api/pedidos/<int:id_pedido>",
+    methods=["PUT"]
+)
+def actualizar_pedido(id_pedido):
+
+    pass
+
+
+@pedido_routes.route(
+    "/api/pedidos/<int:id_pedido>",
+    methods=["DELETE"]
+)
+def eliminar_pedido(id_pedido):
+
+    pass
+
+
+@pedido_routes.route(
+    "/api/pedidos/estado/<string:estado>",
+    methods=["GET"]
+)
+def obtener_pedidos_por_estado(estado):
+
+    pass
+
+
+@pedido_routes.route(
+    "/api/pedidos/resumen",
+    methods=["GET"]
+)
+def obtener_resumen():
+
+    pass

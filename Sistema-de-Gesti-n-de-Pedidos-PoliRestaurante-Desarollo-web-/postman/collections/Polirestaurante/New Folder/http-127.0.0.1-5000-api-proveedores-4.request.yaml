@@ -1,0 +1,6 @@
+$kind: http-request
+name: http://127.0.0.1:5000/api/proveedores/4
+description: ""
+url: http://127.0.0.1:5000/api/proveedores/4
+method: GET
+order: 3000

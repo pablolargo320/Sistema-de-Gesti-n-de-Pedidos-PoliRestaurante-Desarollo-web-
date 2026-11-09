@@ -1,0 +1,21 @@
+$kind: http-request
+name: http://127.0.0.1:5000/api/proveedores
+description: ""
+url: http://127.0.0.1:5000/api/proveedores
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"nombre\": \"Proveedor Prueba Postman\",\r
+
+    \  \"telefono\": \"3007654321\",\r
+
+    \  \"correo\": \"proveedor.prueba@example.com\",\r
+
+    \  \"direccion\": \"Calle de prueba\",\r
+
+    \  \"producto_id_producto\": 1\r
+
+    }"
+order: 2000
