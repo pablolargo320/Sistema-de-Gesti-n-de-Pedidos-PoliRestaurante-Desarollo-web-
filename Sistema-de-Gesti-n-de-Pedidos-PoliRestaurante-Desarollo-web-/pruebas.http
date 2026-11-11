@@ -1,0 +1,32 @@
+### CREAR PROVEEDOR
+POST http://127.0.0.1:5000/api/proveedores
+Content-Type: application/json
+
+{
+  "nombre": "Proveedor Prueba",
+  "telefono": "3001234567",
+  "correo": "prueba@correo.com",
+  "direccion": "Calle 10",
+  "producto_id_producto": 1
+}
+
+### CONSULTAR TODOS LOS PROVEEDORES
+GET http://127.0.0.1:5000/api/proveedores
+
+### CONSULTAR PROVEEDOR POR ID
+GET http://127.0.0.1:5000/api/proveedores/1
+
+### ACTUALIZAR PROVEEDOR
+PUT http://127.0.0.1:5000/api/proveedores/1
+Content-Type: application/json
+
+{
+  "nombre": "Proveedor Actualizado",
+  "telefono": "3017654321",
+  "correo": "actualizado@correo.com",
+  "direccion": "Carrera 20",
+  "producto_id_producto": 1
+}
+
+### ELIMINAR PROVEEDOR DE PRUEBA
+DELETE http://127.0.0.1:5000/api/proveedores/1

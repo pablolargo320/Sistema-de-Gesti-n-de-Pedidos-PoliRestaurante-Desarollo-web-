@@ -1,0 +1,93 @@
+from collections import deque
+
+class Proceso:
+    def __init__(self, pid, llegada, rafaga):
+        self.pid = pid
+        self.llegada = llegada
+        self.rafaga = rafaga          # Ráfaga total requerida
+        self.restante = rafaga        # Ráfaga pendiente
+        self.inicio_atencion = -1     # Para calcular el tiempo de respuesta
+        self.finalizacion = 0
+        self.espera = 0
+        self.retorno = 0              # Turnaround time
+
+def simular_round_robin(procesos, quantum):
+    # Ordenar procesos por tiempo de llegada
+    procesos.sort(key=lambda x: x.llegada)
+    
+    tiempo_actual = 0
+    cola_listos = deque()
+    procesos_completados = []
+    
+    # Índice para rastrear qué procesos van llegando
+    i = 0
+    n = len(procesos)
+    
+    # Agregar los procesos que llegan en el tiempo 0
+    while i < n and procesos[i].llegada <= tiempo_actual:
+        cola_listos.append(procesos[i])
+        i += 1
+        
+    while cola_listos or i < n:
+        if not cola_listos:
+            # Si la CPU está libre pero no hay procesos listos, avanzamos el tiempo
+            tiempo_actual = procesos[i].llegada
+            while i < n and procesos[i].llegada <= tiempo_actual:
+                cola_listos.append(procesos[i])
+                i += 1
+                
+        proceso_actual = cola_listos.popleft()
+        
+        # Registrar el primer momento en que es atendido (para el tiempo de respuesta)
+        if proceso_actual.inicio_atencion == -1:
+            tiempo_respuesta = tiempo_actual - proceso_actual.llegada
+            
+        # Ejecutar por el quantum o por lo que le falte
+        tiempo_ejecucion = min(quantum, proceso_actual.restante)
+        tiempo_actual += tiempo_ejecucion
+        proceso_actual.restante -= tiempo_ejecucion
+        
+        # Revisar si en este lapso de tiempo llegaron nuevos procesos
+        while i < n and procesos[i].llegada <= tiempo_actual:
+            cola_listos.append(procesos[i])
+            i += 1
+            
+        # Si el proceso aún tiene trabajo pendiente, vuelve al final de la cola
+        if proceso_actual.restante > 0:
+            cola_listos.append(proceso_actual)
+        else:
+            # El proceso ha finalizado
+            proceso_actual.finalizacion = tiempo_actual
+            proceso_actual.retorno = proceso_actual.finalizacion - proceso_actual.llegada
+            proceso_actual.espera = proceso_actual.retorno - proceso_actual.rafaga
+            procesos_completados.append(proceso_actual)
+
+    # Mostrar resultados en consola
+    print(f"{'PID':<6} | {'Llegada':<8} | {'Ráfaga':<8} | {'Espera':<8} | {'Retorno':<8}")
+    print("-" * 50)
+    
+    t_espera_total = 0
+    t_retorno_total = 0
+    
+    for p in procesos_completados:
+        t_espera_total += p.espera
+        t_retorno_total += p.retorno
+        print(f"{p.pid:<6} | {p.llegada:<8} | {p.rafaga:<8} | {p.espera:<8} | {p.retorno:<8}")
+        
+    print("-" * 50)
+    print(f"Promedio Tiempo de Espera: {t_espera_total / n:.2f}")
+    print(f"Promedio Tiempo de Retorno: {t_retorno_total / n:.2f}")
+
+# --- Ejemplo de uso ---
+if __name__ == "__main__":
+    # Creamos un conjunto de procesos de ejemplo: (PID, Tiempo_Llegada, Ráfaga)
+    lista_procesos = [
+        Proceso("P1", llegada=0, rafaga=5),
+        Proceso("P2", llegada=1, rafaga=3),
+        Proceso("P3", llegada=2, rafaga=8),
+        Proceso("P4", llegada=3, rafaga=2)
+    ]
+    
+    quantum_fijo = 3
+    print(f"--- SIMULACIÓN ROUND ROBIN (Quantum = {quantum_fijo}) ---\n")
+    simular_round_robin(lista_procesos, quantum_fijo)

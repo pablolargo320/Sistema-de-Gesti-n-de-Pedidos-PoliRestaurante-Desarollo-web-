@@ -1,3 +1,5 @@
+
+from sqlalchemy import Column, Integer, String, Numeric, ForeignKey
 from sqlalchemy import Column, Integer, String, Numeric, Boolean, ForeignKey
 from backend.database.database import Base
 
@@ -12,6 +14,14 @@ class Producto(Base):
         autoincrement=True
     )
 
+    nombre = Column(String(45))
+    descripcion = Column(String(100))
+    precio = Column(Numeric(10, 2))
+    disponible = Column(Integer)
+
+    id_categoria = Column(
+        Integer,
+        ForeignKey("categoria.id_categoria")
     nombre = Column(
         String(45),
         nullable=False
@@ -40,6 +50,8 @@ class Producto(Base):
 
     Administrador_id_administrador = Column(
         Integer,
+        ForeignKey("Administrador.id_administrador")
+    )
         ForeignKey("Administrador.id_administrador"),
         nullable=True
     )

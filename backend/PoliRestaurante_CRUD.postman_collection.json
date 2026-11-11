@@ -1,0 +1,89 @@
+{
+  "info": {
+    "name": "PoliRestaurante - CRUD Mesa, Administrador, MetodoPago",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:5000" }
+  ],
+  "item": [
+    {
+      "name": "Mesa",
+      "item": [
+        { "name": "Listar mesas", "request": { "method": "GET", "url": "{{base_url}}/api/mesas/" } },
+        { "name": "Obtener mesa por id", "request": { "method": "GET", "url": "{{base_url}}/api/mesas/1" } },
+        {
+          "name": "Crear mesa",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"numero\": 6,\n  \"estado\": \"Disponible\"\n}" },
+            "url": "{{base_url}}/api/mesas/"
+          }
+        },
+        {
+          "name": "Actualizar mesa",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"numero\": 6,\n  \"estado\": \"Ocupada\"\n}" },
+            "url": "{{base_url}}/api/mesas/1"
+          }
+        },
+        { "name": "Eliminar mesa", "request": { "method": "DELETE", "url": "{{base_url}}/api/mesas/1" } }
+      ]
+    },
+    {
+      "name": "Administrador",
+      "item": [
+        { "name": "Listar administradores", "request": { "method": "GET", "url": "{{base_url}}/api/administradores/" } },
+        { "name": "Obtener administrador por id", "request": { "method": "GET", "url": "{{base_url}}/api/administradores/1" } },
+        {
+          "name": "Crear administrador",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Jean Perez\",\n  \"correo\": \"jean@polirestaurante.com\",\n  \"usuario\": \"jeanadmin\",\n  \"contrasena\": \"12345\",\n  \"telefono\": \"3009998877\"\n}" },
+            "url": "{{base_url}}/api/administradores/"
+          }
+        },
+        {
+          "name": "Actualizar administrador",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Jean Perez\",\n  \"correo\": \"jean@polirestaurante.com\",\n  \"usuario\": \"jeanadmin\",\n  \"contrasena\": \"54321\",\n  \"telefono\": \"3009998877\"\n}" },
+            "url": "{{base_url}}/api/administradores/1"
+          }
+        },
+        { "name": "Eliminar administrador", "request": { "method": "DELETE", "url": "{{base_url}}/api/administradores/1" } }
+      ]
+    },
+    {
+      "name": "MetodoPago",
+      "item": [
+        { "name": "Listar metodos de pago", "request": { "method": "GET", "url": "{{base_url}}/api/metodos-pago/" } },
+        { "name": "Obtener metodo de pago por id", "request": { "method": "GET", "url": "{{base_url}}/api/metodos-pago/1" } },
+        {
+          "name": "Crear metodo de pago",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"efectivo\": 0,\n  \"aplicacion\": \"Daviplata\",\n  \"tarjeta\": null,\n  \"descripcion\": \"Pago por Daviplata\",\n  \"estado\": 1\n}" },
+            "url": "{{base_url}}/api/metodos-pago/"
+          }
+        },
+        {
+          "name": "Actualizar metodo de pago",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"efectivo\": 0,\n  \"aplicacion\": \"Daviplata\",\n  \"tarjeta\": null,\n  \"descripcion\": \"Pago por Daviplata actualizado\",\n  \"estado\": 0\n}" },
+            "url": "{{base_url}}/api/metodos-pago/1"
+          }
+        },
+        { "name": "Eliminar metodo de pago", "request": { "method": "DELETE", "url": "{{base_url}}/api/metodos-pago/1" } }
+      ]
+    }
+  ]
+}

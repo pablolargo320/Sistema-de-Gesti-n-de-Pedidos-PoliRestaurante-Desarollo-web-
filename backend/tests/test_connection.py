@@ -1,12 +1,10 @@
-from database.connection import get_connection
+from backend.database.connection import get_connection
 
-
-try:
-    conexion = get_connection()
-    print("Conexión exitosa con la base de datos")
-
-    conexion.close()
-
-except Exception as e:
-    print("Error de conexión:")
-    print(e)
+def test_conexion_base_datos():
+    try:
+        conexion = get_connection()
+        assert conexion is not None, "La conexión retorno None"
+        assert conexion.is_connected(), "El driver de MySQL no está conectado"
+        conexion.close()
+    except Exception as e:
+        assert False, f"Error de conexion con mysql-connector: {e}"

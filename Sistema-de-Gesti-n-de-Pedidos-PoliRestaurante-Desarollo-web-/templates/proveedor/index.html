@@ -1,0 +1,934 @@
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#14263d">
+
+    <title>Portal de proveedor | PoliRestaurante</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/proveedor.css') }}">
+</head>
+
+<body>
+
+<div class="app-shell">
+
+    <!-- MENÚ LATERAL -->
+    <aside class="sidebar" id="sidebar">
+
+        <a class="brand" href="/proveedor"
+           aria-label="PoliRestaurante inicio">
+
+            <span class="brand-mark">PR</span>
+
+            <span>
+                <strong>PoliRestaurante</strong>
+                <small>Portal de proveedores</small>
+            </span>
+
+        </a>
+
+        <div class="sidebar-label">GESTIÓN</div>
+
+        <nav class="main-nav" aria-label="Navegación del proveedor">
+
+            <button class="nav-link active"
+                    data-view="solicitudes" type="button">
+                <span class="nav-icon">▤</span>
+                <span>Solicitudes</span>
+                <span class="nav-tag">01</span>
+            </button>
+
+            <button class="nav-link"
+                    data-view="despachos" type="button">
+                <span class="nav-icon">↗</span>
+                <span>Despachos y entregas</span>
+                <span class="nav-tag">02</span>
+            </button>
+
+            <button class="nav-link"
+                    data-view="historial" type="button">
+                <span class="nav-icon">◷</span>
+                <span>Historial y perfil</span>
+                <span class="nav-tag">03</span>
+            </button>
+
+            <button class="nav-link"
+                    data-view="catalogo" type="button">
+                <span class="nav-icon">▦</span>
+                <span>Catálogo suministrado</span>
+                <span class="nav-tag">04</span>
+            </button>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <div class="connection-indicator">
+                <span class="status-dot"></span>
+                <span id="connectionText">
+                    Conectando con el sistema...
+                </span>
+            </div>
+
+            <div class="sidebar-note">
+                Módulo exclusivo de proveedor
+                <br>
+                <span>PoliRestaurante · Desarrollo web</span>
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="main-content">
+
+        <!-- ENCABEZADO -->
+        <header class="topbar">
+
+            <button class="mobile-menu"
+                    id="mobileMenu"
+                    type="button"
+                    aria-label="Abrir menú">
+                ☰
+            </button>
+
+            <div class="breadcrumb">
+                <span>Portal</span>
+                <span class="crumb-separator">/</span>
+                <strong id="breadcrumbCurrent">Solicitudes</strong>
+            </div>
+
+            <div class="topbar-right">
+
+                <span class="system-label">
+                    <span class="status-dot"></span>
+                    Sistema de proveedores
+                </span>
+
+                <div class="avatar" aria-hidden="true">PV</div>
+
+            </div>
+
+        </header>
+
+
+        <div class="page-wrap">
+
+            <!-- BIENVENIDA Y SELECTOR DE PROVEEDOR -->
+            <section class="welcome-row">
+
+                <div>
+                    <p class="eyebrow">ÁREA DE PROVEEDORES</p>
+
+                    <h1 id="pageTitle">
+                        Solicitudes de abastecimiento
+                    </h1>
+
+                    <p class="page-description" id="pageDescription">
+                        Revisa las solicitudes del restaurante y gestiona su atención.
+                    </p>
+                </div>
+
+                <div class="provider-picker">
+
+                    <label for="providerSelect">
+                        Proveedor en consulta
+                    </label>
+
+                    <select id="providerSelect" disabled>
+                        <option value="">Cargando proveedores...</option>
+                    </select>
+
+                </div>
+
+            </section>
+
+
+            <!-- TARJETAS DE RESUMEN -->
+            <section class="summary-grid"
+                     aria-label="Resumen del módulo">
+
+                <article class="summary-card">
+
+                    <div class="summary-top">
+                        <span>Solicitudes pendientes</span>
+                        <span class="summary-icon amber">▤</span>
+                    </div>
+
+                    <strong id="pendingCount">—</strong>
+
+                    <small>Solicitudes por responder</small>
+
+                </article>
+
+
+                <article class="summary-card">
+
+                    <div class="summary-top">
+                        <span>Despachos en proceso</span>
+                        <span class="summary-icon blue">↗</span>
+                    </div>
+
+                    <strong id="dispatchCount">—</strong>
+
+                    <small>Despachos sin entrega confirmada</small>
+
+                </article>
+
+
+                <article class="summary-card">
+
+                    <div class="summary-top">
+                        <span>Productos asociados</span>
+                        <span class="summary-icon violet">▦</span>
+                    </div>
+
+                    <strong id="productCount">—</strong>
+
+                    <small>Según el producto vinculado al proveedor</small>
+
+                </article>
+
+
+                <article class="summary-card">
+
+                    <div class="summary-top">
+                        <span>Estado de conexión</span>
+                        <span class="summary-icon green">⌁</span>
+                    </div>
+
+                    <strong class="connection-value" id="dbStatus">
+                        Verificando
+                    </strong>
+
+                    <small>API Flask y base de datos MySQL</small>
+
+                </article>
+
+            </section>
+
+
+            <!-- ================================= -->
+            <!-- 1. SOLICITUDES DE ABASTECIMIENTO -->
+            <!-- ================================= -->
+
+            <section class="view-panel active"
+                     id="view-solicitudes">
+
+                <div class="section-heading">
+
+                    <div>
+                        <h2>Solicitudes de abastecimiento</h2>
+
+                        <p>
+                            Consulta los requerimientos enviados por el restaurante
+                            y responde cada solicitud.
+                        </p>
+                    </div>
+
+                    <span class="feature-state pending-state"
+                          id="requestsConnectionStatus">
+                        Verificando conexión...
+                    </span>
+
+                </div>
+
+
+                <!-- FILTROS -->
+                <div class="filter-bar">
+
+                    <div class="search-field">
+
+                        <span>⌕</span>
+
+                        <input
+                            type="search"
+                            id="requestSearch"
+                            placeholder="Buscar por producto o número de solicitud"
+                            aria-label="Buscar solicitudes">
+
+                    </div>
+
+
+                    <select id="requestStatusFilter"
+                            aria-label="Filtrar por estado">
+
+                        <option value="">Todos los estados</option>
+
+                        <option value="pendiente">Pendientes</option>
+
+                        <option value="aceptada">Aceptadas</option>
+
+                        <option value="rechazada">Rechazadas</option>
+
+                        <option value="en_despacho">En despacho</option>
+
+                        <option value="completada">Completadas</option>
+
+                    </select>
+
+
+                    <button class="button button-muted"
+                            id="refreshRequests"
+                            type="button">
+                        Actualizar
+                    </button>
+
+                </div>
+
+
+                <!-- TABLA DE SOLICITUDES -->
+                <div class="table-card">
+
+                    <div class="table-scroll">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+                                    <th>Solicitud</th>
+                                    <th>Producto</th>
+                                    <th>Cantidad</th>
+                                    <th>Fecha requerida</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody id="requestsTableBody">
+
+                                <tr>
+                                    <td colspan="6">
+                                        <div class="empty-state">
+                                            <strong>Cargando solicitudes...</strong>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+
+                <div class="info-strip">
+
+                    <span class="info-symbol">i</span>
+
+                    <span>
+                        Las solicitudes se crean desde el proceso del restaurante
+                        y aparecen aquí asociadas al proveedor seleccionado.
+                    </span>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- ============================== -->
+            <!-- 2. DESPACHOS Y ENTREGAS -->
+            <!-- ============================== -->
+
+            <section class="view-panel"
+                     id="view-despachos">
+
+                <div class="section-heading">
+
+                    <div>
+                        <h2>Registrar despacho y confirmar entrega</h2>
+
+                        <p>
+                            Registra envíos de solicitudes aceptadas
+                            y actualiza el estado del transporte.
+                        </p>
+                    </div>
+
+                    <span class="feature-state pending-state"
+                          id="dispatchConnectionStatus">
+                        Verificando conexión...
+                    </span>
+
+                </div>
+
+
+                <div class="two-column">
+
+
+                    <!-- FORMULARIO DE DESPACHO -->
+                    <article class="content-card">
+
+                        <div class="card-heading">
+
+                            <div>
+                                <h3>Nuevo despacho</h3>
+
+                                <p>
+                                    La cantidad no puede superar el saldo
+                                    pendiente de la solicitud.
+                                </p>
+                            </div>
+
+                            <span class="card-icon">↗</span>
+
+                        </div>
+
+
+                        <form id="dispatchForm"
+                              class="form-grid">
+
+
+                            <label class="field full">
+
+                                Solicitud asociada
+
+                                <select id="dispatchRequest" required>
+
+                                    <option value="">
+                                        Cargando solicitudes...
+                                    </option>
+
+                                </select>
+
+                            </label>
+
+
+                            <label class="field">
+
+                                Cantidad a despachar
+
+                                <input
+                                    id="dispatchQuantity"
+                                    type="number"
+                                    min="1"
+                                    step="1"
+                                    placeholder="Ej. 20"
+                                    required>
+
+                            </label>
+
+
+                            <label class="field">
+
+                                Entrega estimada
+
+                                <input
+                                    id="dispatchDueDate"
+                                    type="date">
+
+                            </label>
+
+
+                            <label class="field">
+
+                                Número de guía
+
+                                <input
+                                    id="dispatchGuide"
+                                    type="text"
+                                    maxlength="60"
+                                    placeholder="Guía / referencia">
+
+                            </label>
+
+
+                            <label class="field">
+
+                                Transportadora
+
+                                <input
+                                    id="dispatchCarrier"
+                                    type="text"
+                                    maxlength="80"
+                                    placeholder="Nombre de transportadora">
+
+                            </label>
+
+
+                            <label class="field full">
+
+                                Observaciones
+
+                                <textarea
+                                    id="dispatchObservations"
+                                    rows="3"
+                                    maxlength="255"
+                                    placeholder="Detalles del despacho..."></textarea>
+
+                            </label>
+
+
+                            <div class="form-footer">
+
+                                <span
+                                    id="dispatchMessage"
+                                    class="form-message"
+                                    role="status">
+                                </span>
+
+                                <button
+                                    class="button button-primary"
+                                    type="submit">
+                                    Registrar despacho
+                                </button>
+
+                            </div>
+
+
+                        </form>
+
+                    </article>
+
+
+
+                    <!-- INFORMACIÓN DE LAS ENTREGAS -->
+                    <article class="content-card">
+
+                        <div class="card-heading">
+
+                            <div>
+                                <h3>Flujo de entrega</h3>
+
+                                <p>
+                                    Actualiza el recorrido hasta confirmar
+                                    la recepción.
+                                </p>
+                            </div>
+
+                            <span class="card-icon green-icon">✓</span>
+
+                        </div>
+
+
+                        <div class="delivery-help">
+
+                            <div class="delivery-illustration">
+                                □
+                                <span>✓</span>
+                            </div>
+
+
+                            <strong>Estados del despacho</strong>
+
+
+                            <ol>
+
+                                <li>
+                                    Preparando: despacho recién registrado.
+                                </li>
+
+                                <li>
+                                    Despachado: salió del proveedor.
+                                </li>
+
+                                <li>
+                                    En tránsito: está en camino.
+                                </li>
+
+                                <li>
+                                    Entregado: recepción confirmada.
+                                </li>
+
+                            </ol>
+
+
+                            <p>
+                                Si ocurre un inconveniente, marca
+                                "Con novedad" y luego podrás reanudar el envío.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+
+
+                <!-- TABLA DE DESPACHOS -->
+                <div class="section-heading subheading">
+
+                    <div>
+                        <h2>Despachos registrados</h2>
+
+                        <p>
+                            Administra el estado de cada entrega.
+                        </p>
+                    </div>
+
+
+                    <button
+                        class="button button-muted"
+                        id="refreshDispatches"
+                        type="button">
+                        Actualizar
+                    </button>
+
+                </div>
+
+
+                <div class="table-card">
+
+                    <div class="table-scroll">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+                                    <th>Despacho</th>
+                                    <th>Solicitud</th>
+                                    <th>Producto</th>
+                                    <th>Cantidad</th>
+                                    <th>Guía</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody id="dispatchTableBody">
+
+                                <tr>
+                                    <td colspan="7">
+                                        <div class="empty-state">
+                                            <strong>Cargando despachos...</strong>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- ============================== -->
+            <!-- 3. HISTORIAL Y PERFIL -->
+            <!-- ============================== -->
+
+            <section class="view-panel"
+                     id="view-historial">
+
+                <div class="section-heading">
+
+                    <div>
+                        <h2>Historial y perfil del proveedor</h2>
+
+                        <p>
+                            Actualiza tus datos comerciales y consulta
+                            las operaciones registradas.
+                        </p>
+                    </div>
+
+
+                    <span class="feature-state live-state"
+                          id="historyConnectionStatus">
+                        Perfil conectado a MySQL
+                    </span>
+
+                </div>
+
+
+
+                <div class="two-column profile-layout">
+
+
+                    <!-- FORMULARIO DE PERFIL -->
+                    <article class="content-card">
+
+                        <div class="card-heading">
+
+                            <div>
+                                <h3>Información del proveedor</h3>
+
+                                <p>
+                                    Los cambios se guardan en la tabla proveedor.
+                                </p>
+                            </div>
+
+                            <span class="card-icon">✎</span>
+
+                        </div>
+
+
+
+                        <form id="profileForm"
+                              class="form-grid">
+
+
+                            <label class="field full">
+
+                                Nombre del proveedor
+
+                                <input
+                                    name="nombre"
+                                    id="profileName"
+                                    type="text"
+                                    maxlength="45"
+                                    required>
+
+                            </label>
+
+
+
+                            <label class="field">
+
+                                Teléfono
+
+                                <input
+                                    name="telefono"
+                                    id="profilePhone"
+                                    type="text"
+                                    maxlength="20">
+
+                            </label>
+
+
+
+                            <label class="field">
+
+                                Correo electrónico
+
+                                <input
+                                    name="correo"
+                                    id="profileEmail"
+                                    type="email"
+                                    maxlength="45">
+
+                            </label>
+
+
+
+                            <label class="field full">
+
+                                Dirección
+
+                                <input
+                                    name="direccion"
+                                    id="profileAddress"
+                                    type="text"
+                                    maxlength="45">
+
+                            </label>
+
+
+
+                            <label class="field full">
+
+                                Producto asociado
+
+                                <select
+                                    name="producto_id_producto"
+                                    id="profileProduct">
+
+                                    <option value="">
+                                        Sin producto asociado
+                                    </option>
+
+                                </select>
+
+                            </label>
+
+
+
+                            <div class="form-footer">
+
+                                <span
+                                    id="profileMessage"
+                                    class="form-message"
+                                    role="status">
+                                </span>
+
+
+                                <button
+                                    class="button button-primary"
+                                    type="submit">
+                                    Guardar cambios
+                                </button>
+
+                            </div>
+
+
+                        </form>
+
+                    </article>
+
+
+
+                    <!-- HISTORIAL DE OPERACIONES -->
+                    <article class="content-card history-card">
+
+                        <div class="card-heading">
+
+                            <div>
+                                <h3>Actividad reciente</h3>
+
+                                <p>
+                                    Últimas solicitudes, despachos y entregas.
+                                </p>
+                            </div>
+
+                            <span class="card-icon">◷</span>
+
+                        </div>
+
+
+
+                        <div class="table-scroll">
+
+                            <table class="history-table">
+
+                                <thead>
+
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Tipo</th>
+                                        <th>Detalle</th>
+                                        <th>Estado</th>
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody id="historyTableBody">
+
+                                    <tr>
+                                        <td colspan="4">
+                                            Cargando historial...
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+
+                        <div class="history-footnote">
+
+                            Datos del perfil:
+
+                            <strong id="profileIdentifier">
+                                Selecciona un proveedor
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- ============================== -->
+            <!-- 4. CATÁLOGO SUMINISTRADO -->
+            <!-- ============================== -->
+
+            <section class="view-panel"
+                     id="view-catalogo">
+
+                <div class="section-heading">
+
+                    <div>
+                        <h2>Catálogo de productos suministrados</h2>
+
+                        <p>
+                            Consulta el producto asociado a este proveedor
+                            y su disponibilidad.
+                        </p>
+                    </div>
+
+
+                    <span class="feature-state live-state">
+                        Consulta conectada a MySQL
+                    </span>
+
+                </div>
+
+
+
+                <div id="catalogContent"
+                     class="catalog-grid">
+
+                    <div class="loading-card">
+                        Cargando catálogo...
+                    </div>
+
+                </div>
+
+
+
+                <div class="info-strip">
+
+                    <span class="info-symbol">i</span>
+
+                    <span>
+                        El modelo actual permite asociar un producto por
+                        proveedor mediante
+                        <code>producto_id_producto</code>.
+                    </span>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- PIE DE PÁGINA -->
+            <footer class="page-footer">
+
+                <span>
+                    PoliRestaurante · Módulo de proveedor
+                </span>
+
+                <span>
+                    Interfaz web integrada con Flask y MySQL
+                </span>
+
+            </footer>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+
+<!-- MENSAJES DEL SISTEMA -->
+<div class="toast"
+     id="toast"
+     role="status"
+     aria-live="polite">
+</div>
+
+
+
+<!-- JAVASCRIPT DEL MÓDULO -->
+<script src="{{ url_for('static', filename='js/proveedor.js') }}"></script>
+
+</body>
+</html>

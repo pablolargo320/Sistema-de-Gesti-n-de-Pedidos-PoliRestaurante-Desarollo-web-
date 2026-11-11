@@ -1,0 +1,38 @@
+class PedidoService:
+
+    def __init__(self, pedido_dao):
+
+        self.pedido_dao = pedido_dao
+
+    def crear_pedido(self, pedido):
+
+        return self.pedido_dao.crear(pedido)
+
+    def obtener_pedidos(self):
+
+        return self.pedido_dao.obtener_todos()
+
+    def obtener_pedido(self, id_pedido):
+
+        return self.pedido_dao.obtener_por_id(id_pedido)
+
+    def actualizar_pedido(self, id_pedido, pedido):
+
+        return self.pedido_dao.actualizar(
+            id_pedido,
+            pedido
+        )
+
+    def eliminar_pedido(self, id_pedido):
+
+        return self.pedido_dao.eliminar(id_pedido)
+
+    def obtener_pedidos_por_estado(self, estado):
+
+        return self.pedido_dao.obtener_por_estado(
+            estado
+        )
+
+    def obtener_resumen(self):
+
+        return self.pedido_dao.obtener_resumen()

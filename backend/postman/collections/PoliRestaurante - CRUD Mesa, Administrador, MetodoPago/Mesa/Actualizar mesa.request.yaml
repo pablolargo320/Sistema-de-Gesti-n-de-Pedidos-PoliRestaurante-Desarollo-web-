@@ -1,0 +1,13 @@
+$kind: http-request
+url: "{{base_url}}/api/mesas/1"
+method: PUT
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "numero": 6,
+      "estado": "Ocupada"
+    }
+order: 4000

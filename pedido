@@ -1,0 +1,748 @@
+# ============================================================
+# CRUD TABLA PEDIDO - POLIRESTAURANTE
+# PROYECTO PYTHON
+# ============================================================
+
+from datetime import datetime
+
+
+# ============================================================
+# LISTA PRINCIPAL DE PEDIDOS
+# ============================================================
+
+pedidos = []
+
+
+# ID automático
+
+siguiente_id = 1
+
+
+# ============================================================
+# FUNCIONES AUXILIARES
+# ============================================================
+
+def pausar():
+
+    input("\nPresione ENTER para continuar...")
+
+
+def mostrar_pedido(pedido):
+
+    print("\n----------------------------------------")
+    print("           INFORMACIÓN DEL PEDIDO")
+    print("----------------------------------------")
+
+    print("ID del pedido:", pedido["id_pedido"])
+
+    print(
+        "Fecha de creación:",
+        pedido["fecha_creacion"].strftime("%Y-%m-%d %H:%M:%S")
+    )
+
+    print("Estado:", pedido["estado"])
+
+    print("Total: $", format(pedido["total"], ",.2f"))
+
+    print("Tipo de pedido:", pedido["tipo_pedido"])
+
+    if pedido["id_mesa"] is None:
+        print("ID de mesa: No aplica")
+    else:
+        print("ID de mesa:", pedido["id_mesa"])
+
+    print("ID del cliente:", pedido["id_cliente"])
+
+    print(
+        "ID del administrador:",
+        pedido["Administrador_id_administrador"]
+    )
+
+    print(
+        "ID método de pago:",
+        pedido["metodo_pago_id_metodo_pago"]
+    )
+
+    if pedido["domiciliario_id_domiciliario"] is None:
+        print("ID domiciliario: No aplica")
+    else:
+        print(
+            "ID domiciliario:",
+            pedido["domiciliario_id_domiciliario"]
+        )
+
+    print("----------------------------------------")
+
+
+# ============================================================
+# CREATE - CREAR PEDIDO
+# ============================================================
+
+def crear_pedido():
+
+    global siguiente_id
+
+    print("\n")
+    print("========================================")
+    print("          CREAR NUEVO PEDIDO")
+    print("========================================")
+
+    try:
+
+        estado = input(
+            "Ingrese el estado del pedido: "
+        ).strip()
+
+        if estado == "":
+            print("\nEl estado no puede estar vacío.")
+            return
+
+
+        total = float(
+            input("Ingrese el total del pedido: ")
+        )
+
+        if total < 0:
+            print("\nEl total no puede ser negativo.")
+            return
+
+
+        tipo_pedido = input(
+            "Ingrese el tipo de pedido (Mesa/Domicilio): "
+        ).strip()
+
+
+        # Validar tipo de pedido
+
+        if tipo_pedido.lower() not in ["mesa", "domicilio"]:
+
+            print(
+                "\nEl tipo de pedido debe ser Mesa o Domicilio."
+            )
+
+            return
+
+
+        # ID de mesa
+
+        id_mesa = input(
+            "Ingrese el ID de la mesa "
+            "(Enter si es domicilio): "
+        ).strip()
+
+
+        if id_mesa == "":
+            id_mesa = None
+        else:
+            id_mesa = int(id_mesa)
+
+
+        # Cliente
+
+        id_cliente = int(
+            input("Ingrese el ID del cliente: ")
+        )
+
+
+        # Administrador
+
+        administrador_id_administrador = int(
+            input("Ingrese el ID del administrador: ")
+        )
+
+
+        # Método de pago
+
+        metodo_pago_id_metodo_pago = int(
+            input("Ingrese el ID del método de pago: ")
+        )
+
+
+        # Domiciliario
+
+        domiciliario = input(
+            "Ingrese el ID del domiciliario "
+            "(Enter si es pedido de mesa): "
+        ).strip()
+
+
+        if domiciliario == "":
+            domiciliario_id_domiciliario = None
+        else:
+            domiciliario_id_domiciliario = int(
+                domiciliario
+            )
+
+
+        # Crear diccionario
+
+        pedido = {
+
+            "id_pedido": siguiente_id,
+
+            "fecha_creacion": datetime.now(),
+
+            "estado": estado,
+
+            "total": total,
+
+            "tipo_pedido": tipo_pedido,
+
+            "id_mesa": id_mesa,
+
+            "id_cliente": id_cliente,
+
+            "Administrador_id_administrador":
+                administrador_id_administrador,
+
+            "metodo_pago_id_metodo_pago":
+                metodo_pago_id_metodo_pago,
+
+            "domiciliario_id_domiciliario":
+                domiciliario_id_domiciliario
+
+        }
+
+
+        # Guardar pedido
+
+        pedidos.append(pedido)
+
+
+        print("\n========================================")
+        print("      PEDIDO CREADO CORRECTAMENTE")
+        print("========================================")
+
+        print("ID asignado:", siguiente_id)
+
+        siguiente_id += 1
+
+
+    except ValueError:
+
+        print(
+            "\nError: debe ingresar valores numéricos "
+            "correctos."
+        )
+
+
+# ============================================================
+# READ - LISTAR TODOS LOS PEDIDOS
+# ============================================================
+
+def listar_pedidos():
+
+    print("\n")
+    print("========================================")
+    print("             LISTA DE PEDIDOS")
+    print("========================================")
+
+
+    if len(pedidos) == 0:
+
+        print("\nNo hay pedidos registrados.")
+
+        return
+
+
+    for pedido in pedidos:
+
+        print("\n----------------------------------------")
+
+        print(
+            "ID:",
+            pedido["id_pedido"]
+        )
+
+        print(
+            "Estado:",
+            pedido["estado"]
+        )
+
+        print(
+            "Total: $",
+            format(pedido["total"], ",.2f")
+        )
+
+        print(
+            "Tipo:",
+            pedido["tipo_pedido"]
+        )
+
+        print(
+            "Cliente:",
+            pedido["id_cliente"]
+        )
+
+        if pedido["id_mesa"] is not None:
+
+            print(
+                "Mesa:",
+                pedido["id_mesa"]
+            )
+
+        else:
+
+            print(
+                "Mesa: No aplica"
+            )
+
+        print("----------------------------------------")
+
+
+    print(
+        "\nTotal de pedidos registrados:",
+        len(pedidos)
+    )
+
+
+# ============================================================
+# READ - BUSCAR PEDIDO POR ID
+# ============================================================
+
+def buscar_pedido():
+
+    print("\n")
+    print("========================================")
+    print("           BUSCAR PEDIDO")
+    print("========================================")
+
+
+    try:
+
+        id_pedido = int(
+            input("Ingrese el ID del pedido: ")
+        )
+
+
+        for pedido in pedidos:
+
+            if pedido["id_pedido"] == id_pedido:
+
+                mostrar_pedido(pedido)
+
+                return
+
+
+        print(
+            "\nNo existe un pedido con ese ID."
+        )
+
+
+    except ValueError:
+
+        print(
+            "\nDebe ingresar un ID numérico."
+        )
+
+
+# ============================================================
+# UPDATE - ACTUALIZAR PEDIDO
+# ============================================================
+
+def actualizar_pedido():
+
+    print("\n")
+    print("========================================")
+    print("          ACTUALIZAR PEDIDO")
+    print("========================================")
+
+
+    try:
+
+        id_pedido = int(
+            input("Ingrese el ID del pedido: ")
+        )
+
+
+        for pedido in pedidos:
+
+            if pedido["id_pedido"] == id_pedido:
+
+                print("\nPedido encontrado.")
+
+                mostrar_pedido(pedido)
+
+
+                print("\nIngrese los nuevos datos:")
+
+
+                nuevo_estado = input(
+                    "Nuevo estado: "
+                ).strip()
+
+
+                nuevo_total = float(
+                    input("Nuevo total: ")
+                )
+
+
+                nuevo_tipo = input(
+                    "Nuevo tipo de pedido (Mesa/Domicilio): "
+                ).strip()
+
+
+                if nuevo_tipo.lower() not in [
+                    "mesa",
+                    "domicilio"
+                ]:
+
+                    print(
+                        "\nTipo de pedido inválido."
+                    )
+
+                    return
+
+
+                nueva_mesa = input(
+                    "Nuevo ID de mesa "
+                    "(Enter si no aplica): "
+                ).strip()
+
+
+                if nueva_mesa == "":
+                    nueva_mesa = None
+                else:
+                    nueva_mesa = int(nueva_mesa)
+
+
+                nuevo_cliente = int(
+                    input("Nuevo ID de cliente: ")
+                )
+
+
+                nuevo_administrador = int(
+                    input(
+                        "Nuevo ID de administrador: "
+                    )
+                )
+
+
+                nuevo_metodo = int(
+                    input(
+                        "Nuevo ID de método de pago: "
+                    )
+                )
+
+
+                nuevo_domiciliario = input(
+                    "Nuevo ID de domiciliario "
+                    "(Enter si no aplica): "
+                ).strip()
+
+
+                if nuevo_domiciliario == "":
+                    nuevo_domiciliario = None
+                else:
+                    nuevo_domiciliario = int(
+                        nuevo_domiciliario
+                    )
+
+
+                # Actualizar información
+
+                pedido["estado"] = nuevo_estado
+
+                pedido["total"] = nuevo_total
+
+                pedido["tipo_pedido"] = nuevo_tipo
+
+                pedido["id_mesa"] = nueva_mesa
+
+                pedido["id_cliente"] = nuevo_cliente
+
+                pedido[
+                    "Administrador_id_administrador"
+                ] = nuevo_administrador
+
+                pedido[
+                    "metodo_pago_id_metodo_pago"
+                ] = nuevo_metodo
+
+                pedido[
+                    "domiciliario_id_domiciliario"
+                ] = nuevo_domiciliario
+
+
+                print(
+                    "\nPedido actualizado correctamente."
+                )
+
+                return
+
+
+        print(
+            "\nNo existe un pedido con ese ID."
+        )
+
+
+    except ValueError:
+
+        print(
+            "\nError: ingrese correctamente "
+            "los valores numéricos."
+        )
+
+
+# ============================================================
+# DELETE - ELIMINAR PEDIDO
+# ============================================================
+
+def eliminar_pedido():
+
+    print("\n")
+    print("========================================")
+    print("            ELIMINAR PEDIDO")
+    print("========================================")
+
+
+    try:
+
+        id_pedido = int(
+            input("Ingrese el ID del pedido: ")
+        )
+
+
+        for pedido in pedidos:
+
+            if pedido["id_pedido"] == id_pedido:
+
+                print("\nPedido encontrado.")
+
+                mostrar_pedido(pedido)
+
+
+                confirmacion = input(
+                    "\n¿Está seguro de eliminarlo? (s/n): "
+                ).lower()
+
+
+                if confirmacion == "s":
+
+                    pedidos.remove(pedido)
+
+                    print(
+                        "\nPedido eliminado correctamente."
+                    )
+
+                else:
+
+                    print(
+                        "\nOperación cancelada."
+                    )
+
+                return
+
+
+        print(
+            "\nNo existe un pedido con ese ID."
+        )
+
+
+    except ValueError:
+
+        print(
+            "\nDebe ingresar un ID válido."
+        )
+
+
+# ============================================================
+# BUSCAR PEDIDOS POR ESTADO
+# ============================================================
+
+def buscar_por_estado():
+
+    print("\n")
+    print("========================================")
+    print("        BUSCAR PEDIDOS POR ESTADO")
+    print("========================================")
+
+
+    estado = input(
+        "Ingrese el estado que desea buscar: "
+    ).strip().lower()
+
+
+    encontrados = 0
+
+
+    for pedido in pedidos:
+
+        if pedido["estado"].lower() == estado:
+
+            print(
+                "\nID:",
+                pedido["id_pedido"],
+                "| Estado:",
+                pedido["estado"],
+                "| Total: $",
+                format(pedido["total"], ",.2f"),
+                "| Tipo:",
+                pedido["tipo_pedido"]
+            )
+
+            encontrados += 1
+
+
+    if encontrados == 0:
+
+        print(
+            "\nNo se encontraron pedidos "
+            "con ese estado."
+        )
+
+    else:
+
+        print(
+            "\nPedidos encontrados:",
+            encontrados
+        )
+
+
+# ============================================================
+# MOSTRAR TOTAL DE VENTAS
+# ============================================================
+
+def mostrar_total_ventas():
+
+    print("\n")
+    print("========================================")
+    print("          RESUMEN DE PEDIDOS")
+    print("========================================")
+
+
+    if len(pedidos) == 0:
+
+        print("\nNo hay pedidos registrados.")
+
+        return
+
+
+    total_ventas = 0
+
+
+    for pedido in pedidos:
+
+        total_ventas += pedido["total"]
+
+
+    print(
+        "Cantidad de pedidos:",
+        len(pedidos)
+    )
+
+    print(
+        "Total de ventas: $",
+        format(total_ventas, ",.2f")
+    )
+
+
+# ============================================================
+# MENÚ PRINCIPAL
+# ============================================================
+
+def menu():
+
+    while True:
+
+        print("\n\n")
+
+        print("========================================")
+
+        print("          CRUD DE PEDIDO")
+
+        print("          POLIRESTAURANTE")
+
+        print("========================================")
+
+        print("1. Crear pedido")
+
+        print("2. Listar pedidos")
+
+        print("3. Buscar pedido por ID")
+
+        print("4. Actualizar pedido")
+
+        print("5. Eliminar pedido")
+
+        print("6. Buscar pedidos por estado")
+
+        print("7. Mostrar resumen de ventas")
+
+        print("8. Salir")
+
+        print("========================================")
+
+
+        opcion = input(
+            "Seleccione una opción: "
+        )
+
+
+        if opcion == "1":
+
+            crear_pedido()
+
+
+        elif opcion == "2":
+
+            listar_pedidos()
+
+
+        elif opcion == "3":
+
+            buscar_pedido()
+
+
+        elif opcion == "4":
+
+            actualizar_pedido()
+
+
+        elif opcion == "5":
+
+            eliminar_pedido()
+
+
+        elif opcion == "6":
+
+            buscar_por_estado()
+
+
+        elif opcion == "7":
+
+            mostrar_total_ventas()
+
+
+        elif opcion == "8":
+
+            print(
+                "\n========================================"
+            )
+
+            print(
+                "       PROGRAMA FINALIZADO"
+            )
+
+            print(
+                "========================================"
+            )
+
+            break
+
+
+        else:
+
+            print(
+                "\nOpción inválida."
+            )
+
+
+        pausar()
+
+
+# ============================================================
+# INICIAR PROGRAMA
+# ============================================================
+
+menu()

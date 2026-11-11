@@ -1,0 +1,222 @@
+from backend.database.connection import get_connection
+
+
+class PedidoDAO:
+
+    def crear(self, pedido):
+
+        conexion = get_connection()
+        cursor = conexion.cursor()
+
+        sql = """
+            INSERT INTO pedido
+            (
+                fecha_creacion,
+                estado,
+                total,
+                tipo_pedido,
+                id_mesa,
+                id_cliente,
+                Administrador_id_administrador,
+                metodo_pago_id_metodo_pago,
+                domiciliario_id_domiciliario
+            )
+            VALUES (NOW(), %s, %s, %s, %s, %s, %s, %s, %s)
+        """
+
+        valores = (
+            pedido.estado,
+            pedido.total,
+            pedido.tipo_pedido,
+            pedido.id_mesa,
+            pedido.id_cliente,
+            pedido.Administrador_id_administrador,
+            pedido.metodo_pago_id_metodo_pago,
+            pedido.domiciliario_id_domiciliario
+        )
+
+        cursor.execute(sql, valores)
+
+        conexion.commit()
+
+        pedido.id_pedido = cursor.lastrowid
+
+        cursor.close()
+        conexion.close()
+
+        return pedido
+
+    def obtener_todos(self):
+
+        conexion = get_connection()
+        cursor = conexion.cursor(dictionary=True)
+
+        sql = """
+            SELECT
+                id_pedido,
+                fecha_creacion,
+                estado,
+                total,
+                tipo_pedido,
+                id_mesa,
+                id_cliente,
+                Administrador_id_administrador,
+                metodo_pago_id_metodo_pago,
+                domiciliario_id_domiciliario
+            FROM pedido
+            ORDER BY id_pedido
+        """
+
+        cursor.execute(sql)
+
+        pedidos = cursor.fetchall()
+
+        cursor.close()
+        conexion.close()
+
+        return pedidos
+
+    def obtener_por_id(self, id_pedido):
+
+        conexion = get_connection()
+        cursor = conexion.cursor(dictionary=True)
+
+        sql = """
+            SELECT
+                id_pedido,
+                fecha_creacion,
+                estado,
+                total,
+                tipo_pedido,
+                id_mesa,
+                id_cliente,
+                Administrador_id_administrador,
+                metodo_pago_id_metodo_pago,
+                domiciliario_id_domiciliario
+            FROM pedido
+            WHERE id_pedido = %s
+        """
+
+        cursor.execute(sql, (id_pedido,))
+
+        pedido = cursor.fetchone()
+
+        cursor.close()
+        conexion.close()
+
+        return pedido
+
+    def actualizar(self, id_pedido, pedido):
+
+        conexion = get_connection()
+        cursor = conexion.cursor()
+
+        sql = """
+            UPDATE pedido
+            SET
+                estado = %s,
+                total = %s,
+                tipo_pedido = %s,
+                id_mesa = %s,
+                id_cliente = %s,
+                Administrador_id_administrador = %s,
+                metodo_pago_id_metodo_pago = %s,
+                domiciliario_id_domiciliario = %s
+            WHERE id_pedido = %s
+        """
+
+        valores = (
+            pedido.estado,
+            pedido.total,
+            pedido.tipo_pedido,
+            pedido.id_mesa,
+            pedido.id_cliente,
+            pedido.Administrador_id_administrador,
+            pedido.metodo_pago_id_metodo_pago,
+            pedido.domiciliario_id_domiciliario,
+            id_pedido
+        )
+
+        cursor.execute(sql, valores)
+
+        conexion.commit()
+
+        filas_afectadas = cursor.rowcount
+
+        cursor.close()
+        conexion.close()
+
+        return filas_afectadas
+
+    def eliminar(self, id_pedido):
+
+        conexion = get_connection()
+        cursor = conexion.cursor()
+
+        sql = """
+            DELETE FROM pedido
+            WHERE id_pedido = %s
+        """
+
+        cursor.execute(sql, (id_pedido,))
+
+        conexion.commit()
+
+        filas_afectadas = cursor.rowcount
+
+        cursor.close()
+        conexion.close()
+
+        return filas_afectadas
+
+    def obtener_por_estado(self, estado):
+
+        conexion = get_connection()
+        cursor = conexion.cursor(dictionary=True)
+
+        sql = """
+            SELECT
+                id_pedido,
+                fecha_creacion,
+                estado,
+                total,
+                tipo_pedido,
+                id_mesa,
+                id_cliente,
+                Administrador_id_administrador,
+                metodo_pago_id_metodo_pago,
+                domiciliario_id_domiciliario
+            FROM pedido
+            WHERE estado = %s
+            ORDER BY id_pedido
+        """
+
+        cursor.execute(sql, (estado,))
+
+        pedidos = cursor.fetchall()
+
+        cursor.close()
+        conexion.close()
+
+        return pedidos
+
+    def obtener_resumen(self):
+
+        conexion = get_connection()
+        cursor = conexion.cursor(dictionary=True)
+
+        sql = """
+            SELECT
+                COUNT(*) AS cantidad_pedidos,
+                COALESCE(SUM(total), 0) AS total_ventas
+            FROM pedido
+        """
+
+        cursor.execute(sql)
+
+        resumen = cursor.fetchone()
+
+        cursor.close()
+        conexion.close()
+
+        return resumen
